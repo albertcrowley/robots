@@ -1,4 +1,3 @@
-console.log("in board");
 
 module.exports = {};
 
@@ -13,7 +12,29 @@ class Board {
                 this.data[i][j] = 0;
             }
         }
+        this.robots = [];
+        this.player = {};
+        this.player.x = Math.floor(x/2);
+        this.player.y = Math.floor(y/2);
         this.term = require('terminal-kit').terminal;
+    }
+
+    /**
+     * Adds a robot to the internal Board robot array
+     * @param {Robot} robot
+     */
+    addRobot(robot) {
+        this.robots.push(robot);
+    }
+
+    /**
+     * If there is a robot in the same x,y as this.player, return true
+     * Otherwise return false
+     *
+     * @return {boolean}
+     */
+    isPlayerCrushedByRobot() {
+        return false;
     }
 
     /**
