@@ -34,7 +34,7 @@ class Board {
      * @return {int}
      */
     robotsPerLevel(level) {
-        return 7;
+        return (level*2+1);
     }
 
     /**
@@ -83,8 +83,27 @@ class Board {
      * @return {boolean}
      */
     isPlayerCrushedByRobot() {
+        // if player x = robutt x and player y = robutt y, player is squashed
+        // do it in a loop that checks for each robutt
+        // make sure that you are not getting a x value from one robutt and a y value from another robutt
+        let robutts = this.getRobots();
+        for (let i =0; i < robutts.length; i++) {
+            let r = robutts[i];
+            if (this.player.x == r.x) {
+                if (this.player.y == r.y) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
+
+    // samePlace(a,b) {
+    //     if (a.x == b.x && a.y == b.y) {
+    //         return true;
+    //     }
+    //     return false;
+    // }
 
     /**
      * Run one tick of the game

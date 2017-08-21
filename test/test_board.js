@@ -14,8 +14,7 @@ describe('Board', function() {
         });
         it('should return false if no robot is in the same spot as the player', function() {
            /** @type {Robot} */
-           let robot = new Robot(board, 2, 2);
-           board.addRobot(robot);
+           new Robot(board, 2, 2);
            assert.equal(board.isPlayerCrushedByRobot(), false);
         });
         it('should return true if the player is in the same spot as a robot', function() {
@@ -23,6 +22,7 @@ describe('Board', function() {
             let robot = new Robot(board, board.player.x, board.player.y);
             board.addRobot(robot);
             assert.equal(board.isPlayerCrushedByRobot(), true, "The player was not crushed by a robot in his location.");
+            //if player x is equal to robutt x and player y is equal to robutt y the player is killed
         });
         it('should return true if the player is in the same spot as a robot (more robots)', function() {
             let board = new Board(25, 25);
