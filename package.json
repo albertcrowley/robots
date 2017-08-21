@@ -14,6 +14,7 @@
     "terminal-kit": "^1.11.2"
   },
   "devDependencies": {
+    "chai": "^4.1.1",
     "eslint": "^4.3.0",
     "eslint-config-airbnb": "^15.1.0",
     "eslint-config-google": "^0.9.1",
