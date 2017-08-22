@@ -5,7 +5,6 @@ let {Board} = require('../board.js');
 let {Robot} = require('../robot.js');
 
 describe('Board', function() {
-
     describe('#isPlayerCrushedByRobot()', function() {
         /** @type {Board} */
         board = new Board(25, 25);
@@ -22,7 +21,7 @@ describe('Board', function() {
             let robot = new Robot(board, board.player.x, board.player.y);
             board.addRobot(robot);
             assert.equal(board.isPlayerCrushedByRobot(), true, "The player was not crushed by a robot in his location.");
-            //if player x is equal to robutt x and player y is equal to robutt y the player is killed
+            // if player x is equal to robutt x and player y is equal to robutt y the player is killed
         });
         it('should return true if the player is in the same spot as a robot (more robots)', function() {
             let board = new Board(25, 25);
@@ -72,8 +71,8 @@ describe('Board', function() {
             // console.log (board.robots);
             assert.isAbove(board.robots.length, 5, "There should be at least 5 robots after setting up level 3");
         });
-        it('should have more robots in each level', function(){
-            for (let i=2; i<10; i++){
+        it('should have more robots in each level', function() {
+            for (let i=2; i<10; i++) {
                 for (let j=1; j < i; j++) {
                     assert.isAbove(board.robotsPerLevel(i), board.robotsPerLevel(j), 'There should be more robots in each higher level. This faild for level ' + j + ' and level ' + i);
                 }
@@ -129,6 +128,25 @@ describe('Board', function() {
             b.wreckRobots();
             assert.equal(b.getRobots().length, r_count - 2, 'wreckRobots() should remove any robots at the same location from the robots list.');
             assert.equal(b.getWrecks().length, 2, 'wreckRobots() should put all wrecked robots on the wrecked array');
+       });
+
+       it('Should stop the player from moving off the board', function() {
+            let b = new Board(25, 30);
+            b.player.x = 7; b.player.y= 29;
+            b.movePlayer({'name': 'down'});
+            assert.equal(b.player.y, 29, "The player moved over the top boundary of the board");
+
+            b.player.x=0; b.player.y = 10;
+            b.movePlayer({'name': 'left'});
+            assert.equal(b.player.x, 0, "The player moved over the left boundary of the board");
+
+            b.player.x = 20; b.player.y= 0;
+            b.movePlayer({'name': 'up'});
+            assert.equal(b.player.y, 0, "The player moved over the top boundary of the board");
+
+            b.player.x = 24; b.player.y= 7;
+            b.movePlayer({'name': 'right'});
+            assert.equal(b.player.x, 24, "The player moved over the top boundary of the board");
        });
     });
 });

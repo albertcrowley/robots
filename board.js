@@ -24,7 +24,16 @@ class Board {
         this.player = {};
         this.player.x = Math.floor(this.x/2);
         this.player.y = Math.floor(this.y/2);
+        this.player.glyph = "&";
         this.term = require('terminal-kit').terminal;
+
+        this.horizontal = "+";
+        this.field = "";
+        for (let i=0; i< width; i++) {
+            this.horizontal += "--";
+            this.field += ". ";
+        }
+        this.horizontal += "+";
     }
 
     /**
@@ -107,15 +116,42 @@ class Board {
 
     /**
      * Run one tick of the game
+     *
+     * @param {keypress} key
      */
-    tick() {
-        this.movePlayer();
+    tick(key) {
+        this.movePlayer(key);
         this.moveRobots();
         this.wreckRobots();
+        if (this.isPlayerCrushedByRobot()) {
+            this.playerCrushed();
+        }
+        this.draw();
     }
 
-    movePlayer() {
+    /**
+     * Moves the player
+     * @param {keypress} key
+     */
+    movePlayer(key) {
+        switch (key.name) {
+            case "right":
+                this.player.x++;
+                break;
+            case "left":
+                this.player.x--;
+                break;
+            case "down":
+                this.player.y++;
+                break;
+            case "up":
+                this.player.y--;
+                break;
+        };
+    }
 
+    playerCrushed() {
+        this.player.glyph = "X";
     }
 
     moveRobots() {
@@ -136,33 +172,25 @@ class Board {
      */
     draw() {
         let term = this.term;
-        term.moveTo(1, 1, "+");
-        term.moveTo(this.x*2+2, 1, "+");
-        term.moveTo(1, this.y+2, "+");
-        term.moveTo(this.x*2+2, this.y+2, "+");
-        for (let x=0; x<this.x; x++) {
-            term.moveTo(2 + x*2, 1, "--");
-            term.moveTo(2 + x*2, this.y + 2, "--");
-        }
+        term.moveTo(1, 1, this.horizontal);
+        term.moveTo(1, this.y+2, this.horizontal);
         for (let y=0; y<this.y; y++) {
             term.moveTo(1, y+2, "|");
             term.moveTo(this.x*2+2, y + 2, "|");
         }
-        for (let x=0; x < this.x; x++) {
-            for (let y=0; y < this.y; y++) {
-                term.moveTo(2+2*x, 2+y, '.');
-            }
+        for (let y=0; y < this.y; y++) {
+            term.moveTo(2, 2+y, this.field);
         }
 
-        // console.log("robots");
-        // console.log(this.robots);
-        term.moveTo(0, 23, "drawing robot number " );
-        for (let i=0; i < this.robots.count, i++;) {
-            term.moveTo(0, 24, "drawing robot number " + i);
+        // console.log("robots " + this.robots.length);
+        for (let i=0; i < this.robots.length; i++) {
             let rx = this.robots[i].getX();
             let ry = this.robots[i].getY();
-            term.moveTo(rx, ry, "&");
+            // console.log("x is " + rx + " and y is " + ry);
+            term.moveTo(2+rx*2, 2+ry).brightRed("#");
         }
+
+        term.moveTo(2+ this.player.x *2, 2 + this.player.y).brightGreen(this.player.glyph);
 
         term.moveTo(1, this.y+2);
     }
