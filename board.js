@@ -34,6 +34,9 @@ class Board {
             this.field += ". ";
         }
         this.horizontal += "+";
+
+	let {ScoreBoard} = require('./scoreboard.js');
+	this.scoreboard = new ScoreBoard (1,0,0);
     }
 
     /**
@@ -172,6 +175,7 @@ class Board {
      */
     draw() {
         let term = this.term;
+	term.bgBlack();
         term.moveTo(1, 1, this.horizontal);
         term.moveTo(1, this.y+2, this.horizontal);
         for (let y=0; y<this.y; y++) {
@@ -192,7 +196,12 @@ class Board {
 
         term.moveTo(2+ this.player.x *2, 2 + this.player.y).brightGreen(this.player.glyph);
 
+
+	this.scoreboard.draw();
+
         term.moveTo(1, this.y+2);
+
+	
     }
 }
 
