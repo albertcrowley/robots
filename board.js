@@ -1,6 +1,7 @@
 
 module.exports = {};
 
+
 class Board {
     /**
      * Create a new robot at X, Y
@@ -12,9 +13,9 @@ class Board {
         this.x = width;
         this.y = height;
         this.data = new Array(this.x);
-        for (let i=0; i < this.x; i++) {
+        for (let i = 0; i < this.x; i++) {
             this.data[i] = new Array(this.y);
-            for (let j=0; j < this.y; j++) {
+            for (let j = 0; j < this.y; j++) {
                 this.data[i][j] = 0;
             }
         }
@@ -22,23 +23,28 @@ class Board {
         this.robots = [];
         this.wrecks = [];
         this.player = {};
-        this.player.x = Math.floor(this.x/2);
-        this.player.y = Math.floor(this.y/2);
+        this.player.x = Math.floor(this.x / 2);
+        this.player.y = Math.floor(this.y / 2);
         this.player.glyph = "&";
         this.term = require('terminal-kit').terminal;
 
         this.horizontal = "+";
         this.field = "";
-        for (let i=0; i< width; i++) {
+        for (let i = 0; i < width; i++) {
             this.horizontal += "--";
             this.field += ". ";
         }
         this.horizontal += "+";
 
-	let {ScoreBoard} = require('./scoreboard.js');
-	this.scoreboard = new ScoreBoard (1,0,0);
-    }
+        let {ScoreBoard} = require('./scoreboard.js');
+        this.scoreboard = new ScoreBoard(1, 0, 0);
 
+        if (process.versions['electron']) {
+            this.electron = true;
+        } else {
+            this.electron = false;
+        }
+    }
     /**
      * Returns the expected number of robots for the level.
      * Higher levels will always have more robots
@@ -137,17 +143,21 @@ class Board {
      * @param {keypress} key
      */
     movePlayer(key) {
-        switch (key.name) {
+        switch (key.name || key) { // if the name is null, use the key itself. Helps with electron vs terminal processing
             case "right":
+            case "ArrowRight":
                 this.player.x++;
                 break;
             case "left":
+            case "ArrowLeft":
                 this.player.x--;
                 break;
             case "down":
+            case "ArrowDown":
                 this.player.y++;
                 break;
             case "up":
+            case "ArrowUp":
                 this.player.y--;
                 break;
         };
@@ -170,12 +180,60 @@ class Board {
 
     }
 
+    drawInElectron(canvas) {
+        if (! canvas) {
+            canvas = window.document.getElementById("canvas");
+        }
+        let ctx = canvas.getContext("2d");
+
+        // clear
+        ctx.fillStyle = "#FFFFFF";
+        ctx.beginPath();
+        ctx.rect(0, 0, 500, 500);
+        ctx.fill();
+        ctx.stroke();
+
+        // board
+        ctx.fillStyle = "#000000";
+        ctx.strokeStyle = "#000000";
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(0, 500);
+        ctx.lineTo(500, 500);
+        ctx.lineTo(500, 0);
+        ctx.lineTo(0, 0);
+        ctx.stroke();
+
+        // robots
+        for (let i=0; i < this.robots.length; i++) {
+            let rx = this.robots[i].getX();
+            let ry = this.robots[i].getY();
+            ctx.beginPath();
+            ctx.fillStyle = "#ff0000";
+            ctx.strokeStyle = "#ff0000";
+            ctx.arc(rx*20, ry*20, 10, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // player
+        ctx.beginPath();
+        ctx.fillStyle = "#00ff00";
+        ctx.strokeStyle = "#00ff00";
+        ctx.arc(this.player.x*20, this.player.y*20, 10, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+    }
+
     /**
      * @param {boolean} color
      */
-    draw() {
+    draw(canvas) {
+        if (process.versions['electron']) {
+            return this.drawInElectron(canvas);
+        }
+
         let term = this.term;
-	term.bgBlack();
+        term.bgBlack();
         term.moveTo(1, 1, this.horizontal);
         term.moveTo(1, this.y+2, this.horizontal);
         for (let y=0; y<this.y; y++) {

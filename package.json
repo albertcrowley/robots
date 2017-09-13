@@ -2,9 +2,10 @@
   "name": "robots",
   "version": "1.0.0",
   "description": "Robots game",
-  "main": "index.js",
+  "main": "electron-main.js",
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "start": "electron ."
   },
   "author": "Crowley",
   "license": "ISC",
@@ -21,6 +22,7 @@
     "eslint-plugin-import": "^2.7.0",
     "eslint-plugin-jsx-a11y": "^5.1.1",
     "eslint-plugin-react": "^7.1.0",
-    "mocha": "^3.5.0"
+    "mocha": "^3.5.0",
+    "electron": "~1.6.2"
   }
 }
