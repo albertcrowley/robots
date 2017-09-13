@@ -219,7 +219,12 @@ class Board {
         ctx.beginPath();
         ctx.fillStyle = "#00ff00";
         ctx.strokeStyle = "#00ff00";
-        ctx.arc(this.player.x*20, this.player.y*20, 10, 0, Math.PI * 2);
+        if (this.player.glyph == "X") {
+            ctx.arc(this.player.x * 20, this.player.y * 20, 10, 0, Math.PI /4);
+            ctx.arc(this.player.x * 20, this.player.y * 20, 10, Math.PI, Math.PI * 5/4);
+        } else {
+            ctx.arc(this.player.x * 20, this.player.y * 20, 10, 0, Math.PI * 2);
+        }
         ctx.fill();
         ctx.stroke();
     }
