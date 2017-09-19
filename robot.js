@@ -38,7 +38,6 @@ class Robot {
     getY() {
         return this.y;
     }
-
 }
 
 module.exports.Robot = Robot;

@@ -22,22 +22,26 @@
     ipcRenderer.send('async', "this is a longer string");
 
     let {Renderer} = require('./renderer');
-    
+
     let {Board} = require('./board.js');
     let {Robot} = require('./robot.js');
-    let board = new Board(25, 25);
+    let board = new Board(25, 25, ready);
     // sample robots
     new Robot(board, 2, 5);
     new Robot(board, 14, 8);
     new Robot(board, 4, 20);
     new Robot(board, 3, 3);
     new Robot(board, 12, 6);
-    board.draw(window.document.getElementById("canvas"));
 
-    window.document.onkeydown = function (evt) {
-        evt = evt || window.event;
-        console.log(evt);
-        board.tick(evt.key);
+    function ready () {
+        board.draw(window.document.getElementById("canvas"));
+
+        window.document.onkeydown = function (evt) {
+            evt = evt || window.event;
+            console.log(evt);
+            board.tick(evt.key);
+        }
+
     }
 
 </script>

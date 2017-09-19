@@ -8,10 +8,12 @@ class Board {
      *
      * @param {int} width of the board
      * @param {int} height of the board
+     * @param {function} callback to call when the board is initialized
      */
-    constructor(width, height) {
+    constructor(width, height, callback) {
         this.x = width;
         this.y = height;
+        this.callback = callback;
         this.data = new Array(this.x);
         for (let i = 0; i < this.x; i++) {
             this.data[i] = new Array(this.y);
@@ -41,10 +43,35 @@ class Board {
 
         if (process.versions['electron']) {
             this.electron = true;
+
+            this.robot_img = new Image();
+            this.robot_img.src = "./resources/robot.svg";
+            this.robot_img.onload = () => {this.ready(); };
+
+            this.trash_img = new Image();
+            this.trash_img.src = "./resources/recycle-bin.svg";
+            this.trash_img.onload = () => {this.ready(); };
+
+            this.player_img = new Image();
+            this.player_img.src = "./resources/player-walking.svg";
+            this.player_img.onload = () => {this.ready();};
+
         } else {
             this.electron = false;
         }
     }
+
+    /**
+     * Returns true when the board is ready to work
+     *
+     * @returns {boolean}
+     */
+    ready() {
+        if (( this.robot_img.height > 0 ) && ( this.player_img.height > 0 ) && ( this.trash_img.height > 0 ) ) {
+            this.callback();
+        }
+    }
+
     /**
      * Returns the expected number of robots for the level.
      * Higher levels will always have more robots
@@ -206,27 +233,33 @@ class Board {
 
         // robots
         for (let i=0; i < this.robots.length; i++) {
-            let rx = this.robots[i].getX();
-            let ry = this.robots[i].getY();
-            ctx.beginPath();
-            ctx.fillStyle = "#ff0000";
-            ctx.strokeStyle = "#ff0000";
-            ctx.arc(rx*20, ry*20, 10, 0, Math.PI * 2);
-            ctx.fill();
+            let rx = this.robots[i].getX() * 20;
+            let ry = this.robots[i].getY() * 20;
+            if (this.robot_img) {
+                ctx.drawImage(this.robot_img, rx, ry, 20, 20);
+            } else {
+                ctx.beginPath();
+                ctx.fillStyle = "#ff0000";
+                ctx.strokeStyle = "#ff0000";
+                ctx.arc(rx, ry, 10, 0, Math.PI * 2);
+                ctx.fill();
+            }
         }
 
         // player
-        ctx.beginPath();
-        ctx.fillStyle = "#00ff00";
-        ctx.strokeStyle = "#00ff00";
+        let px = this.player.x * 20;
+        let py = this.player.y * 20;
         if (this.player.glyph == "X") {
-            ctx.arc(this.player.x * 20, this.player.y * 20, 10, 0, Math.PI /4);
-            ctx.arc(this.player.x * 20, this.player.y * 20, 10, Math.PI, Math.PI * 5/4);
+            ctx.beginPath();
+            ctx.fillStyle = "#00ff00";
+            ctx.strokeStyle = "#00ff00";
+            ctx.arc(px * 20, py, 10, 0, Math.PI /4);
+            ctx.arc(px * 20, py, 10, Math.PI, Math.PI * 5/4);
+            ctx.fill();
+            ctx.stroke();
         } else {
-            ctx.arc(this.player.x * 20, this.player.y * 20, 10, 0, Math.PI * 2);
+            ctx.drawImage(this.player_img, px, py, 20, 20);
         }
-        ctx.fill();
-        ctx.stroke();
     }
 
     /**
